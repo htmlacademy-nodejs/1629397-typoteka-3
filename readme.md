@@ -1,7 +1,7 @@
 # Личный проект «Типотека» [![Build status][travis-image]][travis-url]
 
-* Студент: [Айдос](https://up.htmlacademy.ru/nodejs/3/user/1629397).
-* Наставник: `Неизвестно`.
+* Студент: [Айдос](https://htmlacademy.ru/profile/id1629397).
+* Наставник: [Юрий Кучма](https://htmlacademy.ru/profile/krabaton).
 
 ---
 
