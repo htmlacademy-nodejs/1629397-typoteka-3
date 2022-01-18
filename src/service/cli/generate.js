@@ -74,7 +74,7 @@ const generateDate = () => {
   return randomDate.format(`YYYY-MM-DD hh:mm:ss`);
 };
 
-const generateOffers = (count) => (
+const generateArticles = (count) => (
   Array(count).fill({}).map(() => ({
     title: TITLES[getRandomInt(0, TITLES.length - 1)],
     announce: shuffle(LINES).slice(0, getRandomInt(1, restricts.anounce)).join(` `),
@@ -95,7 +95,7 @@ module.exports = {
       process.exit(ExitCode.error);
     }
 
-    const content = JSON.stringify(generateOffers(countOffer));
+    const content = JSON.stringify(generateArticles(countOffer));
 
     fs.writeFile(FILE_NAME, content, (err) => {
       if (err) {
