@@ -2,6 +2,7 @@
 
 const fs = require(`fs`);
 const dayjs = require(`dayjs`);
+const chalk = require(`chalk`);
 const {
   getRandomInt,
   shuffle
@@ -91,7 +92,7 @@ module.exports = {
     const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
     if (countOffer > restricts.mocks) {
-      console.error(`Не больше ${restricts.mocks} публикаций `);
+      console.error(chalk.red(`Не больше ${restricts.mocks} публикаций `));
       process.exit(ExitCode.error);
     }
 
@@ -99,11 +100,11 @@ module.exports = {
 
     fs.writeFile(FILE_NAME, content, (err) => {
       if (err) {
-        console.error(`Can't write data to file...`);
+        console.error(chalk.red(`Can't write data to file...`));
         process.exit(ExitCode.error);
       }
 
-      return console.log(`Operation success. File created.`);
+      return console.log(chalk.green(`Operation success. File created.`));
     });
   }
 };
