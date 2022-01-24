@@ -1,7 +1,8 @@
 'use strict';
 
-const fs = require(`fs`);
+const fs = require(`fs`).promises;
 const dayjs = require(`dayjs`);
+const chalk = require(`chalk`);
 const {
   getRandomInt,
   shuffle
@@ -86,24 +87,23 @@ const generateArticles = (count) => (
 
 module.exports = {
   name: `--generate`,
-  run(args) {
+  async run(args) {
     const [count] = args;
     const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
     if (countOffer > restricts.mocks) {
-      console.error(`Не больше ${restricts.mocks} публикаций `);
+      console.error(chalk.red(`Не больше ${restricts.mocks} публикаций `));
       process.exit(ExitCode.error);
     }
 
     const content = JSON.stringify(generateArticles(countOffer));
 
-    fs.writeFile(FILE_NAME, content, (err) => {
-      if (err) {
-        console.error(`Can't write data to file...`);
-        process.exit(ExitCode.error);
-      }
-
-      return console.log(`Operation success. File created.`);
-    });
+    try {
+      await fs.writeFile(FILE_NAME, content);
+      console.log(chalk.green(`Operation success. File created.`));
+    } catch (err) {
+      console.error(chalk.red(`Can't write data to file...`));
+      process.exit(ExitCode.error);
+    }
   }
 };
