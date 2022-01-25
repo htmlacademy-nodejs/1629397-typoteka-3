@@ -19,7 +19,7 @@ const sendResponse = (response, statusCode, message) => {
       <head>
         <title>With love from Node</title>
       </head>
-      <body>${message}</body>
+      <body><ul>${message}</ul></body>
     </html>`.trim();
 
   response.writeHead(statusCode, {
