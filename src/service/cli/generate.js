@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require(`fs`).promises;
+const path = require(`path`);
 const dayjs = require(`dayjs`);
 const chalk = require(`chalk`);
 const {
@@ -11,9 +12,9 @@ const {ExitCode} = require(`../../utils/constants`);
 
 const DEFAULT_COUNT = 1;
 const FILE_NAME = `mocks.json`;
-const FILE_SENTENCES_PATH = `./data/sentences.txt`;
-const FILE_TITLES_PATH = `./data/titles.txt`;
-const FILE_CATEGORIES_PATH = `./data/categories.txt`;
+const FILE_SENTENCES_PATH = path.join(process.cwd(), `/data/sentences.txt`);
+const FILE_TITLES_PATH = path.join(process.cwd(), `/data/titles.txt`);
+const FILE_CATEGORIES_PATH = path.join(process.cwd(), `/data/categories.txt`);
 
 const restricts = {
   anounce: 5,
@@ -23,9 +24,14 @@ const restricts = {
 const readData = async (filepath) => {
   try {
     const data = await fs.readFile(filepath, `utf8`);
-    return data.trim().split(`\n`);
+    const normalizedData = data.split(`\n`)
+      .filter(Boolean)
+      .map((line) => line.trim());
+
+    return normalizedData;
   } catch (err) {
     console.error(chalk.red(err));
+
     return [];
   }
 };
@@ -38,7 +44,7 @@ const generateDate = () => {
   return randomDate.format(`YYYY-MM-DD hh:mm:ss`);
 };
 
-const generateArticles = (count, sentences, titles, categories) => (
+const generateArticles = (count, {sentences, titles, categories}) => (
   Array(count).fill({}).map(() => ({
     title: titles[getRandomInt(0, titles.length - 1)],
     announce: shuffle(sentences).slice(0, getRandomInt(1, restricts.anounce)).join(` `),
@@ -59,13 +65,16 @@ module.exports = {
       process.exit(ExitCode.error);
     }
 
-    const sentences = await readData(FILE_SENTENCES_PATH);
-    const titles = await readData(FILE_TITLES_PATH);
-    const categories = await readData(FILE_CATEGORIES_PATH);
-    const content = JSON.stringify(generateArticles(countOffer, sentences, titles, categories));
+    const [sentences, titles, categories] = await Promise.all([
+      readData(FILE_SENTENCES_PATH),
+      readData(FILE_TITLES_PATH),
+      readData(FILE_CATEGORIES_PATH),
+    ]);
+    const content = {sentences, titles, categories};
+    const articles = JSON.stringify(generateArticles(countOffer, content));
 
     try {
-      await fs.writeFile(FILE_NAME, content);
+      await fs.writeFile(FILE_NAME, articles);
       console.log(chalk.green(`Operation success. File created.`));
     } catch (err) {
       console.error(chalk.red(`Can't write data to file...`));
